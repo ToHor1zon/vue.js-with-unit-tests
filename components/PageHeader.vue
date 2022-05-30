@@ -25,7 +25,7 @@
         <a href="/"><img src="/logo.png" alt="ГдеМатериал.Ру"></a> <!--TODO(iNerV) do dynamically link-->
       </div>
       <div class="main-navigation__burger">
-        <button class="main-navigation__open-menu-btn">
+        <button class="main-navigation__open-menu-btn" @click="toggleMenu">
           Menu
         </button>
       </div>
@@ -41,62 +41,38 @@
         </li>
       </ul>
     </nav>
-    <ul class="site-navigation">
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category2</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category3</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category4</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category5</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category6</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category7</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category8</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category9</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category10</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category11</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category12</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category13</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category14</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category15</a>
-      </li>
-      <li class="site-navigation__item">
-        <a class="site-navigation__link" href="/">Category16</a>
-      </li>
+    <ul v-if="menu_is_visible" class="site-navigation-parent">
+      <SiteNavItem v-for="menuItem in menu" :key="menuItem.id" :item="getUpdatedItem(menuItem)" />
     </ul>
   </header>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
+import SiteNavItem from '~/components/SiteNavItem/index.vue';
+
 export default {
   name: 'PageHeader',
+  components: {
+    SiteNavItem,
+  },
+  computed: {
+    ...mapState('the_menu', ['menu', 'menu_is_visible']),
+    menuFilltered() {
+      return this.menu[0];
+    },
+  },
+  methods: {
+    ...mapMutations('the_menu', {
+      toggleMenuIsVisuble: 'TOGGLE_MENU_IS_VISIBLE',
+    }),
+    toggleMenu() {
+      this.toggleMenuIsVisuble();
+    },
+    getUpdatedItem(menuItem) {
+      return { ...menuItem, slug: `/catalog/${menuItem.slug}` };
+    },
+  },
 };
 </script>
 
@@ -208,80 +184,6 @@ export default {
 
   &__item:not(:first-child) {
     margin-left: 15px;
-  }
-}
-
-.site-navigation {
-  display: flex;
-  flex-direction: column;
-  grid-area: site-navigation;
-  list-style-type: none;
-  width: 100%;
-  height: calc(100vh - 153px);
-  background: rgb(255, 255, 255);
-  overflow-y: scroll;
-  z-index: 1;
-  padding-left: 0;
-  display: none;
-
-  &__item {
-    display: block;
-    width: 100%;
-    height: 47px;
-    position: relative;
-    color: #333;
-    padding: .75rem 1rem;
-
-    &:hover,
-    &:active {
-      background-color: rgb(130, 0, 255);
-      color: rgb(255, 255, 255);
-    }
-  }
-
-  &__grid {
-    display: grid;
-    grid-template-rows: 90px 90px;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    list-style-type: none;
-    padding: 0;
-  }
-
-  &__grid-item {
-    display: flex;
-    align-items: center;
-    position: relative;
-    height: 100%;
-    text-align: center;
-    color: rgb(130, 0, 255);
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-  }
-
-  &__link {
-    display: block;
-    width: 100%;
-    color: inherit;
-
-    &:hover,
-    &:active {
-      color: rgb(255, 255, 255);
-    }
-
-    &--special {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      padding-left: 50%;
-      left: -10%;
-      height: 100%;
-
-      &:hover,
-      &:active {
-        color: inherit;
-      }
-    }
   }
 }
 </style>
